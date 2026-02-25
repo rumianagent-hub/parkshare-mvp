@@ -7,7 +7,6 @@ import {
   collection,
   getDocs,
   limit,
-  orderBy,
   query,
   where,
 } from 'firebase/firestore';
@@ -31,7 +30,7 @@ type ReviewItem = {
   authorPhotoURL?: string;
   overallRating: number;
   body?: string;
-  createdAt?: PlainTimestamp | Date | { toDate?: () => Date } | unknown;
+  createdAt?: { seconds: number; nanoseconds: number } | null;
 };
 
 // ---------------------------------------------------------------------------
@@ -62,32 +61,14 @@ function todayFormatted(): string {
   });
 }
 
-function getReviewDate(createdAt: ReviewItem['createdAt']): Date | null {
-  if (!createdAt) return null;
-  if (createdAt instanceof Date) return createdAt;
-  if (typeof createdAt === 'object' && createdAt !== null) {
-    if ('seconds' in (createdAt as Record<string, unknown>)) {
-      return new Date(Number((createdAt as PlainTimestamp).seconds) * 1000);
-    }
-    if ('toDate' in (createdAt as Record<string, unknown>)) {
-      return (createdAt as { toDate: () => Date }).toDate();
-    }
-  }
-  return null;
-}
-
-function formatRelativeTime(date: Date | null): string {
-  if (!date) return 'Recently';
-  const diffMs = date.getTime() - Date.now();
-  const absSec = Math.abs(diffMs / 1000);
-  const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
-
-  if (absSec < 60) return rtf.format(Math.round(diffMs / 1000), 'second');
-  if (absSec < 3600) return rtf.format(Math.round(diffMs / (1000 * 60)), 'minute');
-  if (absSec < 86400) return rtf.format(Math.round(diffMs / (1000 * 60 * 60)), 'hour');
-  if (absSec < 2592000) return rtf.format(Math.round(diffMs / (1000 * 60 * 60 * 24)), 'day');
-  if (absSec < 31536000) return rtf.format(Math.round(diffMs / (1000 * 60 * 60 * 24 * 30)), 'month');
-  return rtf.format(Math.round(diffMs / (1000 * 60 * 60 * 24 * 365)), 'year');
+function timeAgo(ts?: { seconds: number } | null): string {
+  if (!ts) return '';
+  const diff = Math.floor((Date.now() / 1000 - ts.seconds) / 86400);
+  if (diff <= 0) return 'Today';
+  if (diff === 1) return '1 day ago';
+  if (diff < 30) return `${diff} days ago`;
+  if (diff < 60) return '1 month ago';
+  return `${Math.floor(diff / 30)} months ago`;
 }
 
 const SPOT_TYPE_LABELS: Record<SpotType, string> = {
@@ -177,14 +158,24 @@ export default function ListingDetailView({ listing, hostName }: Props) {
 
   useEffect(() => {
     async function fetchReviews() {
-      const q = query(
-        collection(db, 'reviews'),
-        where('listingId', '==', listing.id),
-        orderBy('createdAt', 'desc'),
-        limit(10)
-      );
-      const snap = await getDocs(q);
-      setReviews(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<ReviewItem, 'id'>) })));
+      try {
+        const q = query(
+          collection(db, 'reviews'),
+          where('listingId', '==', listing.id),
+          limit(10)
+        );
+        const snap = await getDocs(q);
+        const items = snap.docs
+          .map((d) => ({ id: d.id, ...(d.data() as Omit<ReviewItem, 'id'>) }))
+          .sort((a, b) => {
+            const aTime = a.createdAt?.seconds ?? 0;
+            const bTime = b.createdAt?.seconds ?? 0;
+            return bTime - aTime;
+          });
+        setReviews(items);
+      } catch (err) {
+        console.error('Reviews fetch error:', err);
+      }
     }
 
     if (listing.id) void fetchReviews();
@@ -352,7 +343,12 @@ export default function ListingDetailView({ listing, hostName }: Props) {
 
           {/* Reviews */}
           <section className="pb-8 space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">{t('reviews')}</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              ⭐ Reviews
+              {reviewCount > 0 && (
+                <span className="ml-2 text-base font-normal text-gray-500">({reviewCount})</span>
+              )}
+            </h2>
 
             {reviewCount > 0 && (
               <div className="flex items-center gap-3">
@@ -376,7 +372,7 @@ export default function ListingDetailView({ listing, hostName }: Props) {
             )}
 
             {reviews.length === 0 ? (
-              <p className="text-gray-400 italic text-sm">{t('noReviews')}</p>
+              <p className="text-gray-500 text-sm">No reviews yet — be the first!</p>
             ) : (
               <div className="space-y-3">
                 {reviews.map((review) => {
@@ -389,7 +385,7 @@ export default function ListingDetailView({ listing, hostName }: Props) {
                           <div className="flex items-center justify-between gap-2">
                             <p className="font-semibold text-gray-900 truncate">{authorName}</p>
                             <p className="text-xs text-gray-400 whitespace-nowrap">
-                              {formatRelativeTime(getReviewDate(review.createdAt))}
+                              {timeAgo(review.createdAt)}
                             </p>
                           </div>
                           <div className="mt-1 flex gap-0.5">
