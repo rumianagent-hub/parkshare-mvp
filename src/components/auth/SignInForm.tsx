@@ -3,7 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
+import { doc, getDoc } from 'firebase/firestore';
 import { useAuth } from '@/hooks/useAuth';
+import { db } from '@/lib/firebase/client';
+import { COLLECTIONS } from '@/lib/firebase/firestore';
 import Button from '@/components/ui/Button';
 
 // ---------------------------------------------------------------------------
@@ -63,7 +66,25 @@ export default function SignInForm({ callbackUrl }: SignInFormProps) {
     setLoading(true);
     try {
       await signIn();
-      // Redirect on success
+
+      // After sign-in, check if the user has completed onboarding.
+      // signInWithPopup updates the auth state and returns the user via
+      // onAuthStateChanged, but we can read auth.currentUser immediately.
+      const { auth } = await import('@/lib/firebase/client');
+      const firebaseUser = auth.currentUser;
+
+      if (firebaseUser) {
+        const userRef = doc(db, COLLECTIONS.USERS, firebaseUser.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists() || !userSnap.data()?.onboardingComplete) {
+          // New user or incomplete onboarding — go to onboarding flow
+          router.push(`/${locale}/onboarding`);
+          return;
+        }
+      }
+
+      // Returning user — go to callbackUrl or home
       const destination = callbackUrl ?? `/${locale}`;
       router.push(destination);
     } catch (err: unknown) {
