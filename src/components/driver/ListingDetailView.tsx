@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import type { Listing, Amenity, SpotType, AccessType, VehicleSize } from '@/types';
 
 // ---------------------------------------------------------------------------
-// Serializable listing type (timestamps are plain objects for server → client)
+// Serializable listing type
 // ---------------------------------------------------------------------------
 type PlainTimestamp = { seconds: number; nanoseconds: number };
 export type DisplayListing = Omit<Listing, 'createdAt' | 'updatedAt'> & {
@@ -34,8 +34,12 @@ function pricingLabel(listing: DisplayListing): string {
   return '';
 }
 
-function bookingLabel(listing: DisplayListing): string {
-  return listing.pricingModel === 'monthly' ? 'Get Monthly Pass' : 'Book Now';
+function todayFormatted(): string {
+  return new Date().toLocaleDateString('en-CA', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 }
 
 const SPOT_TYPE_LABELS: Record<SpotType, string> = {
@@ -47,10 +51,10 @@ const SPOT_TYPE_LABELS: Record<SpotType, string> = {
 };
 
 const ACCESS_TYPE_LABELS: Record<AccessType, string> = {
-  key: 'Key',
-  code: 'Gate Code',
-  open: 'Open Access',
-  app: 'App-Controlled',
+  key: '🔑 Key',
+  code: '🔢 Gate Code',
+  open: '🚪 Open Access',
+  app: '📱 App-Controlled',
 };
 
 const VEHICLE_SIZE_LABELS: Record<VehicleSize, string> = {
@@ -79,6 +83,22 @@ const AMENITY_LABELS: Record<Amenity, string> = {
 };
 
 // ---------------------------------------------------------------------------
+// Sub-components
+// ---------------------------------------------------------------------------
+function Divider() {
+  return <hr className="border-gray-100" />;
+}
+
+function HostAvatar({ name }: { name: string }) {
+  const initial = name.charAt(0).toUpperCase();
+  return (
+    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-green-700 text-white font-bold text-lg shrink-0 shadow-sm">
+      {initial}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Props
 // ---------------------------------------------------------------------------
 interface Props {
@@ -94,218 +114,270 @@ export default function ListingDetailView({ listing, hostName }: Props) {
   const locale = useLocale();
 
   return (
-    <div className="lg:grid lg:grid-cols-3 lg:gap-10">
+    <div>
       {/* ------------------------------------------------------------------ */}
-      {/* LEFT / MAIN COLUMN                                                  */}
+      {/* HERO IMAGE — full-width, h-80                                       */}
       {/* ------------------------------------------------------------------ */}
-      <div className="lg:col-span-2 space-y-8">
-        {/* Photo */}
-        <div className="relative w-full h-72 sm:h-96 rounded-2xl overflow-hidden bg-green-50 flex items-center justify-center">
-          {listing.photoURLs && listing.photoURLs.length > 0 ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={listing.photoURLs[0]}
-              alt={listing.address}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="flex flex-col items-center gap-3 text-green-700">
-              <span className="text-8xl">🅿️</span>
-              <p className="text-sm font-medium text-green-600">No photos yet</p>
+      <div className="relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden mb-8">
+        {listing.photoURLs && listing.photoURLs.length > 0 ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={listing.photoURLs[0]}
+            alt={listing.address}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-green-800 to-green-500 flex flex-col items-center justify-center gap-4">
+            <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-white/10 backdrop-blur-sm">
+              <span className="text-6xl">🅿️</span>
             </div>
-          )}
-        </div>
-
-        {/* Title */}
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">{listing.address}</h1>
-          {listing.unit && (
-            <p className="text-gray-500 mt-1">Unit {listing.unit}</p>
-          )}
-          <p className="text-gray-500 mt-1">
-            {listing.city}, {listing.province} {listing.postalCode}
-          </p>
-          <p className="italic text-gray-400 text-sm mt-2">
-            {t('locationNote')}
-          </p>
-        </div>
-
-        {/* Host info */}
-        <div className="flex items-center gap-3 py-4 border-t border-gray-100">
-          <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-semibold text-sm shrink-0">
-            {hostName.charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">{t('hostedBy')}</p>
-            <p className="font-semibold text-gray-900">{hostName}</p>
-          </div>
-        </div>
-
-        {/* Description */}
-        {listing.description && (
-          <section className="border-t border-gray-100 pt-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">
-              {t('description')}
-            </h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-              {listing.description}
+            <p className="text-green-200/70 text-sm font-medium uppercase tracking-widest">
+              {SPOT_TYPE_LABELS[listing.spotType] ?? listing.spotType}
             </p>
-          </section>
+          </div>
         )}
-
-        {/* Amenities */}
-        {listing.amenities && listing.amenities.length > 0 && (
-          <section className="border-t border-gray-100 pt-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              {t('amenities')}
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {listing.amenities.map((amenity) => (
-                <span
-                  key={amenity}
-                  className="bg-green-50 text-green-700 rounded-full px-3 py-1 text-sm flex items-center gap-1.5"
-                >
-                  <span>{AMENITY_ICONS[amenity] ?? '•'}</span>
-                  <span>{AMENITY_LABELS[amenity] ?? amenity}</span>
-                </span>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Spot details */}
-        <section className="border-t border-gray-100 pt-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            {t('spotDetails')}
-          </h2>
-          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-gray-50 rounded-xl p-4">
-              <dt className="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                Spot Type
-              </dt>
-              <dd className="font-semibold text-gray-900">
-                {SPOT_TYPE_LABELS[listing.spotType] ?? listing.spotType}
-              </dd>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-4">
-              <dt className="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                Access
-              </dt>
-              <dd className="font-semibold text-gray-900">
-                {ACCESS_TYPE_LABELS[listing.accessType] ?? listing.accessType}
-              </dd>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-4 sm:col-span-2">
-              <dt className="text-xs text-gray-500 uppercase tracking-wide mb-2">
-                Accepted Vehicle Sizes
-              </dt>
-              <dd className="flex flex-wrap gap-2">
-                {listing.acceptedVehicleSizes && listing.acceptedVehicleSizes.length > 0 ? (
-                  listing.acceptedVehicleSizes.map((size) => (
-                    <span
-                      key={size}
-                      className="bg-white border border-gray-200 text-gray-700 rounded-full px-3 py-0.5 text-sm"
-                    >
-                      {VEHICLE_SIZE_LABELS[size] ?? size}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-gray-400 text-sm">Not specified</span>
-                )}
-              </dd>
-            </div>
-          </dl>
-        </section>
-
-        {/* Reviews placeholder */}
-        <section className="border-t border-gray-100 pt-6 pb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            {t('reviews')}
-          </h2>
-          {listing.totalReviews === 0 ? (
-            <p className="text-gray-400 italic">{t('noReviews')}</p>
-          ) : (
-            <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold text-gray-900">
-                {listing.averageRating.toFixed(1)}
-              </span>
-              <div>
-                <div className="flex gap-0.5">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <span
-                      key={star}
-                      className={
-                        star <= Math.round(listing.averageRating)
-                          ? 'text-yellow-400'
-                          : 'text-gray-300'
-                      }
-                    >
-                      ★
-                    </span>
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500">
-                  {listing.totalReviews}{' '}
-                  {listing.totalReviews === 1 ? 'review' : 'reviews'}
-                </p>
-              </div>
-            </div>
-          )}
-        </section>
       </div>
 
       {/* ------------------------------------------------------------------ */}
-      {/* RIGHT SIDEBAR                                                        */}
+      {/* TWO-COLUMN GRID                                                     */}
       {/* ------------------------------------------------------------------ */}
-      <aside className="mt-8 lg:mt-0">
-        <div className="sticky top-6 bg-white rounded-2xl shadow-md border border-gray-100 p-6 space-y-5">
-          {/* Price */}
+      <div className="lg:grid lg:grid-cols-3 lg:gap-10">
+        {/* ---------------------------------------------------------------- */}
+        {/* LEFT / MAIN COLUMN                                               */}
+        {/* ---------------------------------------------------------------- */}
+        <div className="lg:col-span-2 space-y-7">
+          {/* Title & location */}
           <div>
-            <div className="flex items-end gap-1">
-              <span className="text-4xl font-bold text-green-700">
-                {displayPrice(listing)}
+            <h1 className="text-3xl font-bold text-gray-900 leading-tight">
+              {listing.address}
+              {listing.unit && (
+                <span className="text-xl font-normal text-gray-400 ml-2">
+                  Unit {listing.unit}
+                </span>
+              )}
+            </h1>
+            <p className="mt-2 flex items-center gap-1.5 text-gray-500 text-sm">
+              <span>📍</span>
+              <span>
+                {listing.city}, {listing.province} {listing.postalCode}
               </span>
-              <span className="text-gray-500 mb-1 text-sm">{pricingLabel(listing)}</span>
-            </div>
-            {listing.currency && (
-              <p className="text-xs text-gray-400 mt-0.5">{listing.currency}</p>
-            )}
+            </p>
+            <p className="mt-1 text-xs text-gray-400 italic">{t('locationNote')}</p>
           </div>
 
-          {/* Instant Book badge */}
-          {listing.instantBook && (
-            <div className="flex items-center gap-2 bg-green-50 text-green-700 rounded-xl px-3 py-2 text-sm font-medium">
-              <span>⚡</span>
-              <span>Instant Book available</span>
+          <Divider />
+
+          {/* Host section */}
+          <div className="flex items-center gap-4">
+            <HostAvatar name={hostName} />
+            <div>
+              <p className="text-xs text-gray-400 uppercase tracking-wide mb-0.5">
+                {t('hostedBy')}
+              </p>
+              <p className="font-semibold text-gray-900 text-lg">{hostName}</p>
+              <p className="text-sm text-gray-400">ParkShare member</p>
             </div>
+          </div>
+
+          <Divider />
+
+          {/* Description */}
+          {listing.description && (
+            <>
+              <section>
+                <h2 className="text-lg font-semibold text-gray-900 mb-3">
+                  {t('description')}
+                </h2>
+                <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+                  {listing.description}
+                </p>
+              </section>
+              <Divider />
+            </>
           )}
 
-          {/* Rating */}
-          {listing.totalReviews > 0 && (
-            <div className="flex items-center gap-1 text-sm text-gray-600">
-              <span className="text-yellow-400 text-base">★</span>
-              <span className="font-semibold">{listing.averageRating.toFixed(1)}</span>
-              <span className="text-gray-400">
-                ({listing.totalReviews}{' '}
-                {listing.totalReviews === 1 ? 'review' : 'reviews'})
+          {/* Amenities */}
+          {listing.amenities && listing.amenities.length > 0 && (
+            <>
+              <section>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  {t('amenities')}
+                </h2>
+                <div className="flex flex-wrap gap-2.5">
+                  {listing.amenities.map((amenity) => (
+                    <span
+                      key={amenity}
+                      className="flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-100 rounded-xl px-4 py-2 text-sm font-medium"
+                    >
+                      <span>{AMENITY_ICONS[amenity] ?? '•'}</span>
+                      <span>{AMENITY_LABELS[amenity] ?? amenity}</span>
+                    </span>
+                  ))}
+                </div>
+              </section>
+              <Divider />
+            </>
+          )}
+
+          {/* Spot details */}
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              {t('spotDetails')}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <p className="text-[11px] text-gray-400 uppercase tracking-wider mb-1">
+                  Spot Type
+                </p>
+                <p className="font-semibold text-gray-900">
+                  {SPOT_TYPE_LABELS[listing.spotType] ?? listing.spotType}
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <p className="text-[11px] text-gray-400 uppercase tracking-wider mb-1">
+                  Access Method
+                </p>
+                <p className="font-semibold text-gray-900">
+                  {ACCESS_TYPE_LABELS[listing.accessType] ?? listing.accessType}
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 sm:col-span-2">
+                <p className="text-[11px] text-gray-400 uppercase tracking-wider mb-2">
+                  Accepted Vehicle Sizes
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {listing.acceptedVehicleSizes && listing.acceptedVehicleSizes.length > 0 ? (
+                    listing.acceptedVehicleSizes.map((size) => (
+                      <span
+                        key={size}
+                        className="bg-white border border-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-medium"
+                      >
+                        {VEHICLE_SIZE_LABELS[size] ?? size}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-gray-400 text-sm">Not specified</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <Divider />
+
+          {/* Reviews */}
+          <section className="pb-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              {t('reviews')}
+            </h2>
+            {listing.totalReviews === 0 ? (
+              <p className="text-gray-400 italic text-sm">{t('noReviews')}</p>
+            ) : (
+              <div className="flex items-center gap-3">
+                <span className="text-4xl font-extrabold text-gray-900">
+                  {listing.averageRating.toFixed(1)}
+                </span>
+                <div>
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span
+                        key={star}
+                        className={`text-lg ${
+                          star <= Math.round(listing.averageRating)
+                            ? 'text-yellow-400'
+                            : 'text-gray-200'
+                        }`}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    {listing.totalReviews}{' '}
+                    {listing.totalReviews === 1 ? 'review' : 'reviews'}
+                  </p>
+                </div>
+              </div>
+            )}
+          </section>
+        </div>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* RIGHT SIDEBAR — sticky booking card                              */}
+        {/* ---------------------------------------------------------------- */}
+        <aside className="mt-8 lg:mt-0">
+          <div className="sticky top-24 bg-white rounded-2xl shadow-lg border border-gray-100 p-6 space-y-5">
+            {/* Price */}
+            <div>
+              <div className="flex items-end gap-2">
+                <span className="text-4xl font-extrabold text-green-700 leading-none">
+                  {displayPrice(listing)}
+                </span>
+                <span className="text-gray-400 text-sm mb-1">{pricingLabel(listing)}</span>
+              </div>
+              {listing.currency && (
+                <span className="mt-1.5 inline-block rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-500">
+                  {listing.currency}
+                </span>
+              )}
+            </div>
+
+            {/* Instant Book badge */}
+            {listing.instantBook && (
+              <div className="flex items-center gap-2 bg-green-50 text-green-700 border border-green-100 rounded-xl px-3 py-2 text-sm font-semibold">
+                <span>⚡</span>
+                <span>Instant Book available</span>
+              </div>
+            )}
+
+            {/* Rating in sidebar */}
+            {listing.totalReviews > 0 && (
+              <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                <span className="text-yellow-400 text-base">★</span>
+                <span className="font-semibold">{listing.averageRating.toFixed(1)}</span>
+                <span className="text-gray-400">
+                  ({listing.totalReviews}{' '}
+                  {listing.totalReviews === 1 ? 'review' : 'reviews'})
+                </span>
+              </div>
+            )}
+
+            <hr className="border-gray-100" />
+
+            {/* Booking details */}
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between text-gray-500">
+                <span>Starting</span>
+                <span className="font-medium text-gray-800">{todayFormatted()}</span>
+              </div>
+              <div className="flex justify-between text-gray-500">
+                <span>Duration</span>
+                <span className="font-medium text-gray-800">Monthly pass (30 days)</span>
+              </div>
+            </div>
+
+            <hr className="border-gray-100" />
+
+            {/* CTA button */}
+            <Link
+              href={`/${locale}/checkout/${listing.id}`}
+              className="flex w-full items-center justify-center rounded-xl bg-green-700 py-4 text-lg font-semibold text-white shadow-sm hover:bg-green-800 transition-colors duration-150"
+            >
+              Get Monthly Pass
+            </Link>
+
+            {/* Footnotes */}
+            <p className="text-xs text-gray-400 text-center italic">
+              No payment required today
+            </p>
+            <div className="flex justify-center">
+              <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 border border-gray-100 px-3 py-1 text-[10px] font-medium text-gray-400">
+                🧪 Mock checkout
               </span>
             </div>
-          )}
-
-          {/* Book button */}
-          <Link
-            href={`/${locale}/checkout/${listing.id}`}
-            className="block w-full text-center bg-green-700 hover:bg-green-800 text-white rounded-xl py-3 text-lg font-semibold transition-colors"
-          >
-            {bookingLabel(listing)}
-          </Link>
-
-          {/* Mock note */}
-          <p className="text-xs text-gray-400 text-center">
-            No payment required today — mock checkout
-          </p>
-        </div>
-      </aside>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

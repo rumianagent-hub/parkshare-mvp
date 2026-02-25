@@ -18,29 +18,39 @@ export default async function HostListingsPage({
   params: { locale: string };
 }) {
   const t = await getTranslations({ locale: params.locale, namespace: 'host' });
-  const tCommon = await getTranslations({ locale: params.locale, namespace: 'common' });
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      {/* Page header */}
-      <div className="mb-8 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {t('dashboard.title')}
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            {t('dashboard.subtitle')}
-          </p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Page hero header */}
+      <div className="bg-white border-b border-gray-100 shadow-sm">
+        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-green-600 mb-1">
+                Host Dashboard
+              </p>
+              <h1 className="text-2xl font-extrabold text-gray-900 sm:text-3xl">
+                {t('dashboard.title')}
+              </h1>
+              <p className="mt-1.5 text-sm text-gray-500">
+                Manage your parking spots and track your earnings.
+              </p>
+            </div>
+            <Link
+              href={`/${params.locale}/host/listings/new`}
+              className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-green-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-800 transition-colors"
+            >
+              <span className="text-lg leading-none">+</span>
+              <span>{t('create.title')}</span>
+            </Link>
+          </div>
         </div>
-        <Link
-          href={`/${params.locale}/host/listings/new`}
-          className="inline-flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 text-sm font-medium text-white shrink-0 transition hover:bg-green-800"
-        >
-          + {t('create.title')}
-        </Link>
       </div>
 
-      <HostListingsTable />
-    </main>
+      {/* Content */}
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+        <HostListingsTable />
+      </div>
+    </div>
   );
 }

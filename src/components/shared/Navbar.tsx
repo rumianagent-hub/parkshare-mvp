@@ -6,29 +6,48 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 
 // ---------------------------------------------------------------------------
-// Language switcher: swaps the locale prefix in the current URL
+// ParkShare logo with green circle "P" icon
+// ---------------------------------------------------------------------------
+function ParkShareLogo({ locale }: { locale: string }) {
+  return (
+    <Link
+      href={`/${locale}`}
+      className="flex items-center gap-2.5 group"
+      aria-label="ParkShare home"
+    >
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-700 text-white font-extrabold text-sm shadow-sm group-hover:bg-green-800 transition-colors">
+        P
+      </div>
+      <span className="text-lg font-bold text-gray-900 tracking-tight group-hover:text-green-700 transition-colors">
+        Park<span className="text-green-700">Share</span>
+      </span>
+    </Link>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Language switcher: pill style
 // ---------------------------------------------------------------------------
 function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
-  const pathname = usePathname(); // e.g. "/en/host/listings"
+  const pathname = usePathname();
 
   function switchLocale(next: string) {
-    // Replace the leading locale segment with the new one
     const stripped = pathname.replace(/^\/(en|fr)/, '') || '/';
     router.push(`/${next}${stripped}`);
   }
 
   return (
-    <div className="flex items-center gap-1 rounded-lg border border-gray-200 p-0.5 text-xs font-medium">
+    <div className="flex items-center rounded-full border border-gray-200 bg-gray-50 p-0.5 text-xs font-semibold">
       {(['en', 'fr'] as const).map((lang) => (
         <button
           key={lang}
           onClick={() => switchLocale(lang)}
-          className={`rounded-md px-2 py-1 transition-colors ${
+          className={`rounded-full px-3 py-1 transition-all duration-150 ${
             locale === lang
-              ? 'bg-gray-900 text-white'
-              : 'text-gray-500 hover:text-gray-800'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-400 hover:text-gray-700'
           }`}
           aria-label={`Switch to ${lang.toUpperCase()}`}
         >
@@ -40,9 +59,15 @@ function LanguageSwitcher() {
 }
 
 // ---------------------------------------------------------------------------
-// User avatar: shows photo or initials
+// User avatar: circular with green ring, initials or photo
 // ---------------------------------------------------------------------------
-function UserAvatar({ displayName, photoURL }: { displayName: string | null; photoURL: string | null }) {
+function UserAvatar({
+  displayName,
+  photoURL,
+}: {
+  displayName: string | null;
+  photoURL: string | null;
+}) {
   const initial = (displayName ?? '?').charAt(0).toUpperCase();
 
   if (photoURL) {
@@ -51,15 +76,35 @@ function UserAvatar({ displayName, photoURL }: { displayName: string | null; pho
       <img
         src={photoURL}
         alt={displayName ?? 'User'}
-        className="h-8 w-8 rounded-full object-cover border border-gray-200"
+        className="h-8 w-8 rounded-full object-cover ring-2 ring-green-500 ring-offset-1"
       />
     );
   }
 
   return (
-    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-700 text-xs font-semibold text-white">
+    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-700 text-xs font-bold text-white ring-2 ring-green-300 ring-offset-1">
       {initial}
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Nav link with hover underline effect
+// ---------------------------------------------------------------------------
+function NavLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className="relative text-sm text-gray-600 hover:text-gray-900 transition-colors after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-green-600 after:transition-all after:duration-200 hover:after:w-full"
+    >
+      {children}
+    </Link>
   );
 }
 
@@ -72,48 +117,29 @@ export default function Navbar() {
   const locale = useLocale();
 
   return (
-    <header className="border-b border-gray-200 bg-white">
+    <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-sm shadow-sm">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         {/* Logo */}
-        <Link
-          href={`/${locale}`}
-          className="text-lg font-bold text-green-700 hover:text-green-800 transition-colors"
-        >
-          🅿️ ParkShare
-        </Link>
+        <ParkShareLogo locale={locale} />
 
         {/* Right side */}
-        <div className="flex items-center gap-3 text-sm">
-          <Link
-            href={`/${locale}`}
-            className="hidden sm:block text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            {t('search')}
-          </Link>
+        <div className="flex items-center gap-4 text-sm">
+          {/* Navigation links */}
+          <NavLink href={`/${locale}`}>{t('search')}</NavLink>
 
           {user ? (
             <>
-              <Link
-                href={`/${locale}/passes`}
-                className="hidden sm:block text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                {t('myPasses')}
-              </Link>
-              <Link
-                href={`/${locale}/host/listings`}
-                className="hidden sm:block text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                {t('hostDashboard')}
-              </Link>
+              <NavLink href={`/${locale}/passes`} >{t('myPasses')}</NavLink>
+              <NavLink href={`/${locale}/host/listings`}>{t('hostDashboard')}</NavLink>
 
-              {/* User avatar + name */}
-              <div className="flex items-center gap-2">
+              {/* User avatar + first name */}
+              <div className="flex items-center gap-2 pl-1">
                 <UserAvatar
                   displayName={user.displayName}
                   photoURL={user.photoURL}
                 />
                 {user.displayName && (
-                  <span className="hidden md:block text-sm text-gray-700 font-medium max-w-[120px] truncate">
+                  <span className="hidden md:block text-sm text-gray-700 font-medium max-w-[100px] truncate">
                     {user.displayName.split(' ')[0]}
                   </span>
                 )}
@@ -121,13 +147,16 @@ export default function Navbar() {
 
               <button
                 onClick={signOut}
-                className="btn-secondary text-xs px-3 py-1.5"
+                className="rounded-full border border-gray-200 bg-white px-4 py-1.5 text-xs font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-colors"
               >
                 {t('signOut')}
               </button>
             </>
           ) : (
-            <button onClick={signIn} className="btn-primary text-xs px-3 py-1.5">
+            <button
+              onClick={signIn}
+              className="rounded-full border-2 border-green-700 px-5 py-1.5 text-sm font-semibold text-green-700 hover:bg-green-700 hover:text-white transition-all duration-150"
+            >
               {t('signIn')}
             </button>
           )}

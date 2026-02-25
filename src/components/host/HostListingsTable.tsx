@@ -26,16 +26,24 @@ function StatusBadge({ status }: { status: ListingStatus }) {
   const t = useTranslations('host.listings');
 
   const classes: Record<ListingStatus, string> = {
-    active: 'bg-green-100 text-green-800',
-    inactive: 'bg-gray-100 text-gray-600',
-    pending: 'bg-yellow-100 text-yellow-800',
-    suspended: 'bg-red-100 text-red-700',
+    active: 'bg-green-50 text-green-700 border border-green-100',
+    inactive: 'bg-gray-50 text-gray-500 border border-gray-200',
+    pending: 'bg-yellow-50 text-yellow-700 border border-yellow-100',
+    suspended: 'bg-red-50 text-red-600 border border-red-100',
+  };
+
+  const dots: Record<ListingStatus, string> = {
+    active: 'bg-green-500',
+    inactive: 'bg-gray-400',
+    pending: 'bg-yellow-500',
+    suspended: 'bg-red-500',
   };
 
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${classes[status]}`}
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${classes[status]}`}
     >
+      <span className={`h-1.5 w-1.5 rounded-full ${dots[status]}`} />
       {t(`status.${status}` as Parameters<typeof t>[0])}
     </span>
   );
@@ -46,13 +54,13 @@ function StatusBadge({ status }: { status: ListingStatus }) {
 // ---------------------------------------------------------------------------
 function SkeletonRow() {
   return (
-    <div className="flex animate-pulse gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="flex animate-pulse gap-4 rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
       <div className="flex-1 space-y-2">
-        <div className="h-4 w-48 rounded bg-gray-200" />
-        <div className="h-3 w-64 rounded bg-gray-100" />
+        <div className="h-4 w-48 rounded bg-gray-100" />
+        <div className="h-3 w-64 rounded bg-gray-50" />
       </div>
-      <div className="h-6 w-16 rounded-full bg-gray-200" />
-      <div className="h-4 w-20 rounded bg-gray-100" />
+      <div className="h-6 w-16 rounded-full bg-gray-100" />
+      <div className="h-4 w-20 rounded bg-gray-50" />
     </div>
   );
 }
@@ -73,7 +81,6 @@ export default function HostListingsTable() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch listings
   useEffect(() => {
     if (authLoading) return;
     if (!user) {
@@ -106,7 +113,6 @@ export default function HostListingsTable() {
     fetchListings();
   }, [user, authLoading]);
 
-  // Toggle active / inactive
   async function handleToggleStatus(listing: ListingWithId) {
     const next: ListingStatus = listing.status === 'active' ? 'inactive' : 'active';
     setActionLoading(listing.id);
@@ -125,11 +131,9 @@ export default function HostListingsTable() {
     }
   }
 
-  // Delete
   async function handleDelete(listing: ListingWithId) {
     const confirmed = window.confirm(t('listings.confirmDelete'));
     if (!confirmed) return;
-
     setActionLoading(listing.id);
     try {
       await deleteDoc(doc(db, COLLECTIONS.LISTINGS, listing.id));
@@ -142,7 +146,7 @@ export default function HostListingsTable() {
     }
   }
 
-  // Loading state
+  // Loading
   if (loading || authLoading) {
     return (
       <div className="space-y-3">
@@ -153,108 +157,116 @@ export default function HostListingsTable() {
     );
   }
 
-  // Error state
+  // Error
   if (error) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center text-red-700">
+      <div className="rounded-2xl border border-red-100 bg-red-50 p-6 text-center text-sm text-red-600">
         {error}
       </div>
     );
   }
 
-  // Empty state
+  // Empty state — illustration style
   if (listings.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-12 text-center shadow-sm">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-          <svg
-            className="h-8 w-8 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
-        </div>
-        <p className="mb-2 text-base font-medium text-gray-700">
+      <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-16 text-center shadow-sm">
+        <div className="mx-auto mb-5 text-6xl">🏠</div>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">
           {t('dashboard.noListings')}
-        </p>
-        <p className="mb-6 text-sm text-gray-400">
-          {t('dashboard.subtitle')}
+        </h3>
+        <p className="text-sm text-gray-400 mb-8 max-w-xs mx-auto">
+          Add your first parking spot and start earning. It only takes a few minutes.
         </p>
         <Link
           href={`/${locale}/host/listings/new`}
-          className="inline-flex items-center gap-2 rounded-lg bg-green-700 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-green-800"
+          className="inline-flex items-center gap-2 rounded-xl bg-green-700 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-green-800 transition-colors"
         >
-          + {t('dashboard.addFirst')}
+          <span>+</span>
+          <span>{t('dashboard.addFirst')}</span>
         </Link>
       </div>
     );
   }
 
-  // Desktop table / mobile cards
+  // Stats bar
+  const activeCount = listings.filter((l) => l.status === 'active').length;
+
   return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div className="space-y-5">
+      {/* Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Total Spots</p>
+          <p className="text-2xl font-extrabold text-gray-900">{listings.length}</p>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Active</p>
+          <p className="text-2xl font-extrabold text-green-700">{activeCount}</p>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm hidden sm:block">
+          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Inactive</p>
+          <p className="text-2xl font-extrabold text-gray-400">{listings.length - activeCount}</p>
+        </div>
+      </div>
+
       {/* Desktop table */}
-      <div className="hidden overflow-x-auto md:block">
+      <div className="hidden overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm md:block">
         <table className="w-full text-sm">
-          <thead className="border-b border-gray-100 bg-gray-50">
+          <thead className="border-b border-gray-100 bg-gray-50/80">
             <tr className="text-left">
-              <th className="px-6 py-3 font-medium text-gray-600">Address</th>
-              <th className="px-4 py-3 font-medium text-gray-600">Status</th>
-              <th className="px-4 py-3 font-medium text-gray-600">Monthly Rate</th>
-              <th className="px-4 py-3 font-medium text-gray-600 text-right">
+              <th className="px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                Address
+              </th>
+              <th className="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                Status
+              </th>
+              <th className="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                Rate
+              </th>
+              <th className="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-400 text-right">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-50">
             {listings.map((listing) => {
               const isLoading = actionLoading === listing.id;
               return (
-                <tr key={listing.id} className="hover:bg-gray-50">
+                <tr
+                  key={listing.id}
+                  className="group hover:bg-gray-50/60 transition-colors"
+                >
                   <td className="px-6 py-4">
-                    <p className="font-medium text-gray-900">
+                    <p className="font-semibold text-gray-900 group-hover:text-green-700 transition-colors">
                       {listing.address}
                       {listing.unit ? `, ${listing.unit}` : ''}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-400 mt-0.5">
                       {listing.city}, {listing.province} {listing.postalCode}
                     </p>
                   </td>
                   <td className="px-4 py-4">
                     <StatusBadge status={listing.status} />
                   </td>
-                  <td className="px-4 py-4 text-gray-700">
+                  <td className="px-4 py-4 font-medium text-gray-700">
                     {listing.monthlyRate
-                      ? `$${listing.monthlyRate} CAD`
+                      ? `$${listing.monthlyRate} /mo`
                       : listing.hourlyRate
-                      ? `$${listing.hourlyRate}/hr`
+                      ? `$${listing.hourlyRate} /hr`
                       : '—'}
                   </td>
                   <td className="px-4 py-4">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-1.5">
                       <Link
                         href={`/${locale}/host/listings/${listing.id}/edit`}
-                        className="rounded-md px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 border border-gray-200"
+                        className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 border border-gray-200 transition-colors"
                       >
                         {tCommon('edit')}
                       </Link>
                       <button
                         onClick={() => handleToggleStatus(listing)}
                         disabled={isLoading}
-                        className="rounded-md px-3 py-1.5 text-xs font-medium border border-gray-200 disabled:opacity-50 hover:bg-gray-100 text-gray-600"
+                        className="rounded-lg px-3 py-1.5 text-xs font-medium border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition-colors"
                       >
                         {listing.status === 'active'
                           ? t('listings.actions.deactivate')
@@ -263,7 +275,7 @@ export default function HostListingsTable() {
                       <button
                         onClick={() => handleDelete(listing)}
                         disabled={isLoading}
-                        className="rounded-md px-3 py-1.5 text-xs font-medium text-red-600 border border-red-100 hover:bg-red-50 disabled:opacity-50"
+                        className="rounded-lg px-3 py-1.5 text-xs font-medium text-red-500 border border-red-100 hover:bg-red-50 disabled:opacity-40 transition-colors"
                       >
                         {tCommon('delete')}
                       </button>
@@ -277,41 +289,44 @@ export default function HostListingsTable() {
       </div>
 
       {/* Mobile cards */}
-      <div className="divide-y divide-gray-100 md:hidden">
+      <div className="space-y-3 md:hidden">
         {listings.map((listing) => {
           const isLoading = actionLoading === listing.id;
           return (
-            <div key={listing.id} className="p-4 space-y-3">
+            <div
+              key={listing.id}
+              className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm space-y-3"
+            >
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="font-medium text-gray-900">
+                  <p className="font-semibold text-gray-900">
                     {listing.address}
                     {listing.unit ? `, ${listing.unit}` : ''}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-400 mt-0.5">
                     {listing.city}, {listing.province} {listing.postalCode}
                   </p>
                 </div>
                 <StatusBadge status={listing.status} />
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm font-medium text-gray-600">
                 {listing.monthlyRate
                   ? `$${listing.monthlyRate} CAD / month`
                   : listing.hourlyRate
                   ? `$${listing.hourlyRate} CAD / hr`
                   : '—'}
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 pt-1">
                 <Link
                   href={`/${locale}/host/listings/${listing.id}/edit`}
-                  className="rounded-md px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 border border-gray-200"
+                  className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 border border-gray-200"
                 >
                   {tCommon('edit')}
                 </Link>
                 <button
                   onClick={() => handleToggleStatus(listing)}
                   disabled={isLoading}
-                  className="rounded-md px-3 py-1.5 text-xs font-medium border border-gray-200 disabled:opacity-50 hover:bg-gray-100 text-gray-600"
+                  className="rounded-lg px-3 py-1.5 text-xs font-medium border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-40"
                 >
                   {listing.status === 'active'
                     ? t('listings.actions.deactivate')
@@ -320,7 +335,7 @@ export default function HostListingsTable() {
                 <button
                   onClick={() => handleDelete(listing)}
                   disabled={isLoading}
-                  className="rounded-md px-3 py-1.5 text-xs font-medium text-red-600 border border-red-100 hover:bg-red-50 disabled:opacity-50"
+                  className="rounded-lg px-3 py-1.5 text-xs font-medium text-red-500 border border-red-100 hover:bg-red-50 disabled:opacity-40"
                 >
                   {tCommon('delete')}
                 </button>

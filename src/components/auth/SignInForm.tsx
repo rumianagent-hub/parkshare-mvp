@@ -7,7 +7,6 @@ import { doc, getDoc } from 'firebase/firestore';
 import { useAuth } from '@/hooks/useAuth';
 import { db } from '@/lib/firebase/client';
 import { COLLECTIONS } from '@/lib/firebase/firestore';
-import Button from '@/components/ui/Button';
 
 // ---------------------------------------------------------------------------
 // Google SVG icon
@@ -18,7 +17,7 @@ function GoogleIcon() {
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      className="h-5 w-5"
+      className="h-5 w-5 shrink-0"
     >
       <path
         fill="#4285F4"
@@ -67,9 +66,6 @@ export default function SignInForm({ callbackUrl }: SignInFormProps) {
     try {
       await signIn();
 
-      // After sign-in, check if the user has completed onboarding.
-      // signInWithPopup updates the auth state and returns the user via
-      // onAuthStateChanged, but we can read auth.currentUser immediately.
       const { auth } = await import('@/lib/firebase/client');
       const firebaseUser = auth.currentUser;
 
@@ -78,13 +74,11 @@ export default function SignInForm({ callbackUrl }: SignInFormProps) {
         const userSnap = await getDoc(userRef);
 
         if (!userSnap.exists() || !userSnap.data()?.onboardingComplete) {
-          // New user or incomplete onboarding — go to onboarding flow
           router.push(`/${locale}/onboarding`);
           return;
         }
       }
 
-      // Returning user — go to callbackUrl or home
       const destination = callbackUrl ?? `/${locale}`;
       router.push(destination);
     } catch (err: unknown) {
@@ -103,49 +97,63 @@ export default function SignInForm({ callbackUrl }: SignInFormProps) {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* Card */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-          {/* Logo / App name */}
-          <div className="mb-8 flex flex-col items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-700 text-2xl text-white shadow-md">
-              🅿️
-            </div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
-              ParkShare
-            </h1>
+    <div className="w-full max-w-sm">
+      {/* Card */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+        {/* Logo */}
+        <div className="mb-8 flex flex-col items-center gap-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-700 font-black text-2xl text-white shadow-md">
+            P
           </div>
-
-          {/* Title & subtitle */}
-          <div className="mb-6 text-center">
-            <h2 className="text-xl font-semibold text-gray-900">{t('title')}</h2>
-            <p className="mt-1 text-sm text-gray-500">{t('subtitle')}</p>
-          </div>
-
-          {/* Error message */}
-          {error && (
-            <div
-              role="alert"
-              className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-            >
-              {error}
-            </div>
-          )}
-
-          {/* Google sign-in button */}
-          <Button
-            variant="secondary"
-            fullWidth
-            size="lg"
-            loading={isLoading}
-            onClick={handleSignIn}
-            disabled={isLoading}
-          >
-            {!isLoading && <GoogleIcon />}
-            {t('continueWithGoogle')}
-          </Button>
+          <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
+            Park<span className="text-green-700">Share</span>
+          </h1>
         </div>
+
+        {/* Title & subtitle */}
+        <div className="mb-7 text-center">
+          <h2 className="text-xl font-bold text-gray-900">{t('title')}</h2>
+          <p className="mt-1.5 text-sm text-gray-400">{t('subtitle')}</p>
+        </div>
+
+        {/* Error */}
+        {error && (
+          <div
+            role="alert"
+            className="mb-5 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600"
+          >
+            {error}
+          </div>
+        )}
+
+        {/* Google sign-in button */}
+        <button
+          onClick={handleSignIn}
+          disabled={isLoading}
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 hover:shadow-md transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? (
+            <span className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-green-600" />
+          ) : (
+            <GoogleIcon />
+          )}
+          {t('continueWithGoogle')}
+        </button>
+
+        {/* Divider */}
+        <div className="my-6 flex items-center gap-3">
+          <div className="h-px flex-1 bg-gray-100" />
+          <span className="text-xs text-gray-300 font-medium">secure sign-in</span>
+          <div className="h-px flex-1 bg-gray-100" />
+        </div>
+
+        {/* Fine print */}
+        <p className="text-center text-xs text-gray-400 leading-relaxed">
+          By signing in, you agree to our{' '}
+          <span className="underline cursor-pointer hover:text-gray-600">Terms</span>
+          {' '}and{' '}
+          <span className="underline cursor-pointer hover:text-gray-600">Privacy Policy</span>.
+        </p>
       </div>
     </div>
   );

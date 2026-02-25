@@ -6,7 +6,6 @@ import ListingDetailView, {
 } from '@/components/driver/ListingDetailView';
 import { adminDb } from '@/lib/firebase/admin';
 import type { Listing } from '@/types';
-import Navbar from '@/components/shared/Navbar';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -59,11 +58,13 @@ async function fetchListing(id: string): Promise<DisplayListing | null> {
 async function fetchHostName(hostId: string): Promise<string> {
   try {
     const userSnap = await adminDb.collection('users').doc(hostId).get();
-    if (!userSnap.exists) return 'Host';
+    // BUG FIX: seed listings have hostId that doesn't exist in users —
+    // show "ParkShare" instead of the raw uid or generic "Host"
+    if (!userSnap.exists) return 'ParkShare';
     const data = userSnap.data();
-    return (data?.displayName as string) ?? 'Host';
+    return (data?.displayName as string) || 'ParkShare';
   } catch {
-    return 'Host';
+    return 'ParkShare';
   }
 }
 
@@ -95,35 +96,32 @@ export default async function ListingDetailPage({
 }) {
   const listing = await fetchListing(params.id);
 
-  // Not found or not active
+  // Not found or not active — BUG FIX: removed duplicate <Navbar /> here
   if (!listing || listing.status !== 'active') {
     return (
-      <main className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8 text-center">
-          <p className="text-6xl mb-6">🅿️</p>
-          <h1 className="text-2xl font-bold text-gray-900 mb-3">
-            Listing not found
-          </h1>
-          <p className="text-gray-500 mb-8">
-            This spot may no longer be available or the link may be incorrect.
-          </p>
-          <Link
-            href={`/${params.locale}`}
-            className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl font-semibold transition-colors"
-          >
-            ← Back to home
-          </Link>
-        </div>
-      </main>
+      <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8 text-center">
+        <p className="text-6xl mb-6">🅿️</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-3">
+          Listing not found
+        </h1>
+        <p className="text-gray-500 mb-8">
+          This spot may no longer be available or the link may be incorrect.
+        </p>
+        <Link
+          href={`/${params.locale}`}
+          className="inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl font-semibold transition-colors"
+        >
+          ← Back to home
+        </Link>
+      </div>
     );
   }
 
   const hostName = await fetchHostName(listing.hostId);
 
+  // BUG FIX: removed duplicate <Navbar /> — it's already in [locale]/layout.tsx
   return (
-    <main className="min-h-screen bg-gray-50">
-      <Navbar />
+    <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav className="mb-6">
@@ -137,6 +135,6 @@ export default async function ListingDetailPage({
 
         <ListingDetailView listing={listing} hostName={hostName} />
       </div>
-    </main>
+    </div>
   );
 }
