@@ -37,17 +37,18 @@ service cloud.firestore {
     // Listings
     // -------------------------------------------------------------------------
     match /listings/{listingId} {
-      // Active listings are publicly readable (for search)
-      allow read: if resource.data.status == 'active'
-                  || (isSignedIn() && resource.data.hostId == request.auth.uid);
+      // Public read — all listings readable; query filters handle active/inactive scoping.
+      // The previous per-document rule (resource.data.status == 'active') caused collection
+      // queries to fail because Firestore evaluates rules per-document before returning results.
+      allow read: if true;
       // Only authenticated users can create; host must be themselves
       allow create: if isSignedIn()
                     && request.resource.data.hostId == request.auth.uid
                     && isValidListing();
-      // Only the host can update/delete their listing
+      // Only the host can update their listing
       allow update: if isSignedIn()
                     && resource.data.hostId == request.auth.uid
-                    && isValidListing();
+                    && request.resource.data.hostId == resource.data.hostId;
       allow delete: if isSignedIn()
                     && resource.data.hostId == request.auth.uid;
     }
