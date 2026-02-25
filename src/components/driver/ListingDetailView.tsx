@@ -1,8 +1,18 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from 'firebase/firestore';
 import type { Listing, Amenity, SpotType, AccessType, VehicleSize } from '@/types';
+import { db } from '@/lib/firebase/client';
 
 // ---------------------------------------------------------------------------
 // Serializable listing type
@@ -12,6 +22,16 @@ export type DisplayListing = Omit<Listing, 'createdAt' | 'updatedAt'> & {
   id: string;
   createdAt?: PlainTimestamp | unknown;
   updatedAt?: PlainTimestamp | unknown;
+};
+
+type ReviewItem = {
+  id: string;
+  listingId: string;
+  authorName?: string;
+  authorPhotoURL?: string;
+  overallRating: number;
+  body?: string;
+  createdAt?: PlainTimestamp | Date | { toDate?: () => Date } | unknown;
 };
 
 // ---------------------------------------------------------------------------
@@ -40,6 +60,34 @@ function todayFormatted(): string {
     month: 'long',
     day: 'numeric',
   });
+}
+
+function getReviewDate(createdAt: ReviewItem['createdAt']): Date | null {
+  if (!createdAt) return null;
+  if (createdAt instanceof Date) return createdAt;
+  if (typeof createdAt === 'object' && createdAt !== null) {
+    if ('seconds' in (createdAt as Record<string, unknown>)) {
+      return new Date(Number((createdAt as PlainTimestamp).seconds) * 1000);
+    }
+    if ('toDate' in (createdAt as Record<string, unknown>)) {
+      return (createdAt as { toDate: () => Date }).toDate();
+    }
+  }
+  return null;
+}
+
+function formatRelativeTime(date: Date | null): string {
+  if (!date) return 'Recently';
+  const diffMs = date.getTime() - Date.now();
+  const absSec = Math.abs(diffMs / 1000);
+  const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+
+  if (absSec < 60) return rtf.format(Math.round(diffMs / 1000), 'second');
+  if (absSec < 3600) return rtf.format(Math.round(diffMs / (1000 * 60)), 'minute');
+  if (absSec < 86400) return rtf.format(Math.round(diffMs / (1000 * 60 * 60)), 'hour');
+  if (absSec < 2592000) return rtf.format(Math.round(diffMs / (1000 * 60 * 60 * 24)), 'day');
+  if (absSec < 31536000) return rtf.format(Math.round(diffMs / (1000 * 60 * 60 * 24 * 30)), 'month');
+  return rtf.format(Math.round(diffMs / (1000 * 60 * 60 * 24 * 365)), 'year');
 }
 
 const SPOT_TYPE_LABELS: Record<SpotType, string> = {
@@ -98,6 +146,19 @@ function HostAvatar({ name }: { name: string }) {
   );
 }
 
+function ReviewAvatar({ name, photoURL }: { name: string; photoURL?: string }) {
+  if (photoURL) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={photoURL} alt={name} className="h-10 w-10 rounded-full object-cover" />;
+  }
+
+  return (
+    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-700 font-semibold text-sm">
+      {(name || '?').charAt(0).toUpperCase()}
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Props
 // ---------------------------------------------------------------------------
@@ -112,6 +173,30 @@ interface Props {
 export default function ListingDetailView({ listing, hostName }: Props) {
   const t = useTranslations('driver.listingDetail');
   const locale = useLocale();
+  const [reviews, setReviews] = useState<ReviewItem[]>([]);
+
+  useEffect(() => {
+    async function fetchReviews() {
+      const q = query(
+        collection(db, 'reviews'),
+        where('listingId', '==', listing.id),
+        orderBy('createdAt', 'desc'),
+        limit(10)
+      );
+      const snap = await getDocs(q);
+      setReviews(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<ReviewItem, 'id'>) })));
+    }
+
+    if (listing.id) void fetchReviews();
+  }, [listing.id]);
+
+  const avgRating = useMemo(() => {
+    if (!reviews.length) return listing.averageRating ?? 0;
+    const total = reviews.reduce((sum, r) => sum + (r.overallRating || 0), 0);
+    return total / reviews.length;
+  }, [reviews, listing.averageRating]);
+
+  const reviewCount = reviews.length || listing.totalReviews || 0;
 
   return (
     <div>
@@ -266,37 +351,63 @@ export default function ListingDetailView({ listing, hostName }: Props) {
           <Divider />
 
           {/* Reviews */}
-          <section className="pb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              {t('reviews')}
-            </h2>
-            {listing.totalReviews === 0 ? (
-              <p className="text-gray-400 italic text-sm">{t('noReviews')}</p>
-            ) : (
+          <section className="pb-8 space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900">{t('reviews')}</h2>
+
+            {reviewCount > 0 && (
               <div className="flex items-center gap-3">
-                <span className="text-4xl font-extrabold text-gray-900">
-                  {listing.averageRating.toFixed(1)}
-                </span>
+                <span className="text-4xl font-extrabold text-gray-900">{avgRating.toFixed(1)}</span>
                 <div>
                   <div className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <span
                         key={star}
-                        className={`text-lg ${
-                          star <= Math.round(listing.averageRating)
-                            ? 'text-yellow-400'
-                            : 'text-gray-200'
-                        }`}
+                        className={`text-lg ${star <= Math.round(avgRating) ? 'text-yellow-400' : 'text-gray-200'}`}
                       >
                         ★
                       </span>
                     ))}
                   </div>
                   <p className="text-sm text-gray-500 mt-0.5">
-                    {listing.totalReviews}{' '}
-                    {listing.totalReviews === 1 ? 'review' : 'reviews'}
+                    {reviewCount} {reviewCount === 1 ? 'review' : 'reviews'}
                   </p>
                 </div>
+              </div>
+            )}
+
+            {reviews.length === 0 ? (
+              <p className="text-gray-400 italic text-sm">{t('noReviews')}</p>
+            ) : (
+              <div className="space-y-3">
+                {reviews.map((review) => {
+                  const authorName = review.authorName || 'Anonymous';
+                  return (
+                    <article key={review.id} className="rounded-xl border border-gray-200 bg-white p-4">
+                      <div className="flex items-start gap-3">
+                        <ReviewAvatar name={authorName} photoURL={review.authorPhotoURL} />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="font-semibold text-gray-900 truncate">{authorName}</p>
+                            <p className="text-xs text-gray-400 whitespace-nowrap">
+                              {formatRelativeTime(getReviewDate(review.createdAt))}
+                            </p>
+                          </div>
+                          <div className="mt-1 flex gap-0.5">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <span
+                                key={star}
+                                className={`text-sm ${star <= Math.round(review.overallRating) ? 'text-yellow-400' : 'text-gray-200'}`}
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      {review.body && <p className="mt-3 text-sm text-gray-700 leading-relaxed">{review.body}</p>}
+                    </article>
+                  );
+                })}
               </div>
             )}
           </section>
@@ -331,13 +442,12 @@ export default function ListingDetailView({ listing, hostName }: Props) {
             )}
 
             {/* Rating in sidebar */}
-            {listing.totalReviews > 0 && (
+            {reviewCount > 0 && (
               <div className="flex items-center gap-1.5 text-sm text-gray-600">
                 <span className="text-yellow-400 text-base">★</span>
-                <span className="font-semibold">{listing.averageRating.toFixed(1)}</span>
+                <span className="font-semibold">{avgRating.toFixed(1)}</span>
                 <span className="text-gray-400">
-                  ({listing.totalReviews}{' '}
-                  {listing.totalReviews === 1 ? 'review' : 'reviews'})
+                  ({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})
                 </span>
               </div>
             )}
@@ -367,9 +477,7 @@ export default function ListingDetailView({ listing, hostName }: Props) {
             </Link>
 
             {/* Footnotes */}
-            <p className="text-xs text-gray-400 text-center italic">
-              No payment required today
-            </p>
+            <p className="text-xs text-gray-400 text-center italic">No payment required today</p>
             <div className="flex justify-center">
               <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 border border-gray-100 px-3 py-1 text-[10px] font-medium text-gray-400">
                 🧪 Mock checkout
