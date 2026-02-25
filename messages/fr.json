@@ -1,0 +1,448 @@
+{
+  "common": {
+    "appName": "ParkShare",
+    "tagline": "Trouvez et partagez un stationnement, sans effort.",
+    "loading": "Chargement…",
+    "saving": "Enregistrement…",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "learnMore": "En savoir plus",
+    "viewAll": "Voir tout",
+    "noResults": "Aucun résultat trouvé.",
+    "required": "Requis",
+    "optional": "Facultatif",
+    "or": "ou",
+    "and": "et",
+    "yes": "Oui",
+    "no": "Non",
+    "perMonth": "/ mois",
+    "perDay": "/ jour",
+    "perHour": "/ h",
+    "free": "Gratuit",
+    "currency": "CAD"
+  },
+
+  "nav": {
+    "home": "Accueil",
+    "search": "Trouver un stationnement",
+    "myPasses": "Mes laissez-passer",
+    "hostDashboard": "Tableau de bord hôte",
+    "listings": "Annonces",
+    "newListing": "Ajouter une annonce",
+    "profile": "Profil",
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "language": "Langue",
+    "switchToFr": "Français",
+    "switchToEn": "English"
+  },
+
+  "auth": {
+    "signIn": {
+      "title": "Bon retour",
+      "subtitle": "Connectez-vous pour accéder à votre compte",
+      "continueWithGoogle": "Continuer avec Google",
+      "divider": "ou",
+      "emailPlaceholder": "Adresse courriel",
+      "passwordPlaceholder": "Mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "noAccount": "Pas encore de compte ?",
+      "signUp": "S'inscrire",
+      "signingIn": "Connexion en cours…",
+      "error": {
+        "generic": "Échec de la connexion. Veuillez réessayer.",
+        "popupClosed": "La fenêtre de connexion a été fermée. Veuillez réessayer.",
+        "network": "Erreur réseau. Vérifiez votre connexion."
+      }
+    },
+    "signOut": {
+      "confirm": "Voulez-vous vraiment vous déconnecter ?",
+      "success": "Vous avez été déconnecté."
+    },
+    "errors": {
+      "unauthorized": "Vous devez être connecté pour accéder à cette page.",
+      "forbidden": "Vous n'avez pas la permission d'accéder à cette page."
+    }
+  },
+
+  "onboarding": {
+    "title": "Bienvenue sur ParkShare !",
+    "subtitle": "Dites-nous qui vous êtes pour personnaliser votre expérience.",
+    "steps": {
+      "role": "Votre rôle",
+      "profile": "Votre profil",
+      "done": "C'est parti !"
+    },
+    "roleStep": {
+      "heading": "Comment utiliserez-vous ParkShare ?",
+      "driver": "J'ai besoin d'un stationnement",
+      "driverDesc": "Trouvez et réservez une place près de votre destination.",
+      "host": "J'ai une place à louer",
+      "hostDesc": "Publiez votre entrée de garage et gagnez de l'argent.",
+      "both": "Les deux"
+    },
+    "profileStep": {
+      "displayName": "Nom complet",
+      "displayNamePlaceholder": "Jane Dupont",
+      "phone": "Numéro de téléphone",
+      "phonePlaceholder": "+1 (416) 000-0000",
+      "avatar": "Photo de profil",
+      "uploadPhoto": "Téléverser une photo"
+    },
+    "doneStep": {
+      "heading": "Vous êtes prêt !",
+      "ctaDriver": "Trouver un stationnement",
+      "ctaHost": "Ajouter votre première annonce"
+    }
+  },
+
+  "host": {
+    "dashboard": {
+      "title": "Tableau de bord hôte",
+      "subtitle": "Gérez vos annonces et suivez vos revenus.",
+      "noListings": "Vous n'avez encore aucune annonce.",
+      "addFirst": "Ajouter votre première annonce",
+      "stats": {
+        "activeListings": "Annonces actives",
+        "totalBookings": "Réservations totales",
+        "pendingBookings": "En attente",
+        "monthlyRevenue": "Revenus (ce mois)"
+      }
+    },
+    "listings": {
+      "title": "Mes annonces",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "pending": "En révision",
+        "suspended": "Suspendue"
+      },
+      "actions": {
+        "activate": "Activer",
+        "deactivate": "Désactiver",
+        "edit": "Modifier l'annonce",
+        "delete": "Supprimer l'annonce",
+        "viewBookings": "Voir les réservations"
+      },
+      "confirmDelete": "Supprimer cette annonce ? Cette action est irréversible.",
+      "deleteSuccess": "Annonce supprimée.",
+      "deleteError": "Échec de la suppression."
+    },
+    "create": {
+      "title": "Ajouter une annonce",
+      "subtitle": "Publiez votre place et commencez à gagner.",
+      "steps": {
+        "location": "Emplacement",
+        "details": "Détails",
+        "pricing": "Tarification",
+        "photos": "Photos",
+        "review": "Révision"
+      },
+      "location": {
+        "heading": "Où se trouve votre place ?",
+        "address": "Adresse",
+        "addressPlaceholder": "123 rue Principale, Toronto, ON",
+        "unit": "Unité / appartement (facultatif)",
+        "city": "Ville",
+        "province": "Province",
+        "postalCode": "Code postal",
+        "useCurrentLocation": "Utiliser ma position actuelle",
+        "mapInstructions": "Faites glisser l'épingle pour préciser l'emplacement."
+      },
+      "details": {
+        "heading": "Décrivez votre place aux conducteurs",
+        "spotType": "Type de place",
+        "spotTypes": {
+          "driveway": "Entrée de garage",
+          "garage": "Garage",
+          "surface_lot": "Terrain de surface",
+          "underground": "Souterrain",
+          "street": "Rue"
+        },
+        "accessType": "Type d'accès",
+        "accessTypes": {
+          "key": "Clé",
+          "code": "Code de portail",
+          "open": "Accès libre",
+          "app": "Contrôlé par application"
+        },
+        "vehicleSizes": "Tailles de véhicules acceptées",
+        "vehicleSizeOptions": {
+          "compact": "Compact",
+          "standard": "Standard",
+          "suv": "VUS / Camion",
+          "oversized": "Surdimensionné"
+        },
+        "amenities": "Commodités",
+        "amenityOptions": {
+          "covered": "Couvert",
+          "ev_charging": "Recharge VE",
+          "security_camera": "Caméra de sécurité",
+          "lighting": "Bien éclairé",
+          "wheelchair": "Accessible en fauteuil roulant",
+          "heated": "Chauffé"
+        },
+        "description": "Description",
+        "descriptionPlaceholder": "Décrivez votre place — instructions d'accès, repères à proximité, etc.",
+        "descriptionHint": "Min. 20 caractères. Soyez précis pour aider les conducteurs à vous trouver."
+      },
+      "pricing": {
+        "heading": "Définissez votre tarif",
+        "pricingModel": "Modèle de tarification",
+        "models": {
+          "hourly": "À l'heure",
+          "daily": "À la journée",
+          "monthly": "Abonnement mensuel"
+        },
+        "hourlyRate": "Tarif horaire (CAD)",
+        "dailyRate": "Tarif journalier (CAD)",
+        "monthlyRate": "Tarif mensuel (CAD)",
+        "currency": "Devise",
+        "minBookingHours": "Réservation minimale (heures)",
+        "maxBookingDays": "Réservation maximale (jours)",
+        "availability": "Disponibilité",
+        "availabilityHint": "Définissez les heures de disponibilité de votre place chaque jour.",
+        "instantBook": "Activer la réservation instantanée",
+        "instantBookDesc": "Les conducteurs peuvent réserver sans attendre votre approbation."
+      },
+      "photos": {
+        "heading": "Ajoutez des photos de votre place",
+        "hint": "Téléversez au moins 1 photo. Des photos claires aident les conducteurs à reconnaître votre place.",
+        "upload": "Téléverser des photos",
+        "dragDrop": "Glissez-déposez ou cliquez pour téléverser",
+        "maxSize": "Max 5 Mo par photo • JPG, PNG, WebP",
+        "uploadError": "Échec du téléversement. Veuillez réessayer.",
+        "removePhoto": "Supprimer la photo"
+      },
+      "review": {
+        "heading": "Vérifiez votre annonce",
+        "submitListing": "Soumettre l'annonce",
+        "submitSuccess": "Votre annonce a été soumise pour révision.",
+        "submitError": "Échec de la soumission. Veuillez réessayer."
+      }
+    },
+    "edit": {
+      "title": "Modifier l'annonce",
+      "saveChanges": "Enregistrer les modifications",
+      "saveSuccess": "Annonce mise à jour.",
+      "saveError": "Échec de la mise à jour. Veuillez réessayer."
+    },
+    "verify": {
+      "title": "Vérifier l'accès au stationnement",
+      "subtitle": "Scannez le code QR d'un conducteur pour confirmer sa réservation.",
+      "scanQR": "Scanner le code QR",
+      "orEnterCode": "Ou entrez le code de réservation manuellement",
+      "codePlaceholder": "Entrez le code de 8 caractères",
+      "verifyButton": "Vérifier",
+      "result": {
+        "valid": "✓ Réservation valide",
+        "invalid": "✗ Invalide ou expiré",
+        "alreadyUsed": "Déjà enregistré",
+        "details": "Détails de la réservation"
+      },
+      "bookingInfo": {
+        "driver": "Conducteur",
+        "spot": "Place",
+        "duration": "Durée",
+        "checkedIn": "Enregistré à"
+      }
+    }
+  },
+
+  "driver": {
+    "search": {
+      "title": "Trouver un stationnement",
+      "placeholder": "Recherchez une adresse, un quartier ou un repère…",
+      "filters": "Filtres",
+      "sortBy": "Trier par",
+      "sortOptions": {
+        "distance": "Distance",
+        "price_asc": "Prix : Bas à élevé",
+        "price_desc": "Prix : Élevé à bas",
+        "rating": "Évaluation"
+      },
+      "filterPanel": {
+        "priceRange": "Fourchette de prix",
+        "spotType": "Type de place",
+        "amenities": "Commodités",
+        "vehicleSize": "Taille du véhicule",
+        "availability": "Disponible maintenant",
+        "instantBook": "Réservation instantanée seulement",
+        "apply": "Appliquer les filtres",
+        "reset": "Réinitialiser"
+      },
+      "resultsCount": "{count, plural, one {# place trouvée} other {# places trouvées}}",
+      "map": "Carte",
+      "list": "Liste",
+      "noResults": "Aucune place trouvée dans cette zone. Essayez d'élargir votre recherche."
+    },
+    "listingDetail": {
+      "bookNow": "Réserver maintenant",
+      "selectPlan": "Choisir un forfait",
+      "monthly": "Abonnement mensuel",
+      "daily": "Journalier",
+      "hourly": "Horaire",
+      "hostedBy": "Hébergé par",
+      "memberSince": "Membre depuis {date}",
+      "ratings": "{count} évaluations",
+      "amenities": "Commodités",
+      "spotDetails": "Détails de la place",
+      "location": "Emplacement",
+      "locationNote": "L'adresse exacte est fournie après la réservation.",
+      "description": "Description",
+      "reviews": "Avis",
+      "noReviews": "Aucun avis pour l'instant.",
+      "reportListing": "Signaler cette annonce",
+      "shareButton": "Partager"
+    }
+  },
+
+  "checkout": {
+    "title": "Finaliser la réservation",
+    "summary": "Résumé de la réservation",
+    "spot": "Place",
+    "plan": "Forfait",
+    "duration": "Durée",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "startTime": "Heure de début",
+    "vehiclePlate": "Plaque d'immatriculation",
+    "vehiclePlatePlaceholder": "ABC 1234",
+    "vehicleMake": "Marque / modèle du véhicule",
+    "vehicleMakePlaceholder": "Toyota Corolla",
+    "priceBreakdown": {
+      "subtotal": "Sous-total",
+      "serviceFee": "Frais de service",
+      "taxes": "Taxes (TVH)",
+      "total": "Total"
+    },
+    "paymentMethod": "Mode de paiement",
+    "cardNumber": "Numéro de carte",
+    "expiry": "Expiration",
+    "cvv": "CVV",
+    "nameOnCard": "Nom sur la carte",
+    "payButton": "Payer {amount}",
+    "processing": "Traitement en cours…",
+    "terms": "En complétant cette réservation, vous acceptez nos {terms} et notre {privacy}.",
+    "termsLink": "Conditions d'utilisation",
+    "privacyLink": "Politique de confidentialité",
+    "success": {
+      "title": "Réservation confirmée ! 🎉",
+      "subtitle": "Votre laissez-passer de stationnement est prêt.",
+      "qrInstructions": "Présentez ce code QR à l'hôte pour vous enregistrer.",
+      "downloadPass": "Télécharger le laissez-passer",
+      "viewPasses": "Voir mes laissez-passer",
+      "bookAnother": "Réserver une autre place"
+    },
+    "errors": {
+      "paymentFailed": "Paiement échoué. Vérifiez vos coordonnées.",
+      "slotUnavailable": "Cette place n'est plus disponible pour la période sélectionnée.",
+      "generic": "Une erreur est survenue. Veuillez réessayer."
+    }
+  },
+
+  "passes": {
+    "title": "Mes laissez-passer",
+    "subtitle": "Laissez-passer de stationnement actifs et passés.",
+    "tabs": {
+      "active": "Actifs",
+      "upcoming": "À venir",
+      "past": "Passés"
+    },
+    "empty": {
+      "active": "Aucun laissez-passer actif.",
+      "upcoming": "Aucune réservation à venir.",
+      "past": "Aucune réservation passée."
+    },
+    "card": {
+      "spot": "Place",
+      "address": "Adresse",
+      "validUntil": "Valide jusqu'au",
+      "validFrom": "Valide à partir du",
+      "status": {
+        "active": "Actif",
+        "upcoming": "À venir",
+        "expired": "Expiré",
+        "cancelled": "Annulé"
+      },
+      "showQR": "Afficher le code QR",
+      "cancelPass": "Annuler le laissez-passer",
+      "renewPass": "Renouveler",
+      "viewDetails": "Détails"
+    },
+    "detail": {
+      "title": "Détails du laissez-passer",
+      "qrCode": "Code QR d'entrée",
+      "qrInstructions": "Présentez-le à la place de stationnement pour vous enregistrer.",
+      "bookingId": "ID de réservation",
+      "cancellationPolicy": "Politique d'annulation",
+      "cancelSuccess": "Laissez-passer annulé. Un remboursement sera traité dans 5 à 7 jours ouvrables.",
+      "cancelError": "Échec de l'annulation. Veuillez contacter le support."
+    }
+  },
+
+  "ratings": {
+    "title": "Laisser un avis",
+    "subtitle": "Comment s'est passée votre expérience à cette place ?",
+    "overallRating": "Évaluation globale",
+    "categories": {
+      "accuracy": "Exactitude",
+      "cleanliness": "Propreté",
+      "access": "Accès",
+      "communication": "Communication"
+    },
+    "writtenReview": "Avis écrit (facultatif)",
+    "reviewPlaceholder": "Partagez votre expérience avec les autres…",
+    "submitReview": "Soumettre l'avis",
+    "reviewSuccess": "Merci pour votre avis !",
+    "reviewError": "Échec de la soumission. Veuillez réessayer.",
+    "stars": {
+      "1": "Mauvais",
+      "2": "Passable",
+      "3": "Bien",
+      "4": "Très bien",
+      "5": "Excellent"
+    }
+  },
+
+  "errors": {
+    "notFound": {
+      "title": "Page introuvable",
+      "message": "La page que vous recherchez n'existe pas.",
+      "cta": "Retour à l'accueil"
+    },
+    "serverError": {
+      "title": "Une erreur est survenue",
+      "message": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+      "cta": "Réessayer"
+    },
+    "offline": {
+      "title": "Vous êtes hors ligne",
+      "message": "Vérifiez votre connexion Internet et réessayez."
+    },
+    "forbidden": {
+      "title": "Accès refusé",
+      "message": "Vous n'avez pas la permission de consulter cette page."
+    },
+    "validation": {
+      "required": "Ce champ est requis.",
+      "email": "Entrez une adresse courriel valide.",
+      "phone": "Entrez un numéro de téléphone valide.",
+      "minLength": "Doit comporter au moins {min} caractères.",
+      "maxLength": "Doit comporter au plus {max} caractères.",
+      "min": "Doit être au moins {min}.",
+      "max": "Doit être au plus {max}.",
+      "positiveNumber": "Doit être un nombre positif.",
+      "invalidPostalCode": "Entrez un code postal canadien valide.",
+      "invalidPlate": "Entrez une plaque d'immatriculation valide."
+    }
+  }
+}

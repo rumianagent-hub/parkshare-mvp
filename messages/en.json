@@ -1,0 +1,448 @@
+{
+  "common": {
+    "appName": "ParkShare",
+    "tagline": "Find & share parking, effortlessly.",
+    "loading": "Loading…",
+    "saving": "Saving…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "close": "Close",
+    "search": "Search",
+    "learnMore": "Learn more",
+    "viewAll": "View all",
+    "noResults": "No results found.",
+    "required": "Required",
+    "optional": "Optional",
+    "or": "or",
+    "and": "and",
+    "yes": "Yes",
+    "no": "No",
+    "perMonth": "/ month",
+    "perDay": "/ day",
+    "perHour": "/ hr",
+    "free": "Free",
+    "currency": "CAD"
+  },
+
+  "nav": {
+    "home": "Home",
+    "search": "Find Parking",
+    "myPasses": "My Passes",
+    "hostDashboard": "Host Dashboard",
+    "listings": "Listings",
+    "newListing": "Add Listing",
+    "profile": "Profile",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "language": "Language",
+    "switchToFr": "Français",
+    "switchToEn": "English"
+  },
+
+  "auth": {
+    "signIn": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to access your account",
+      "continueWithGoogle": "Continue with Google",
+      "divider": "or",
+      "emailPlaceholder": "Email address",
+      "passwordPlaceholder": "Password",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "signingIn": "Signing in…",
+      "error": {
+        "generic": "Sign-in failed. Please try again.",
+        "popupClosed": "Sign-in window was closed. Please try again.",
+        "network": "Network error. Check your connection."
+      }
+    },
+    "signOut": {
+      "confirm": "Are you sure you want to sign out?",
+      "success": "You have been signed out."
+    },
+    "errors": {
+      "unauthorized": "You must be signed in to view this page.",
+      "forbidden": "You don't have permission to access this page."
+    }
+  },
+
+  "onboarding": {
+    "title": "Welcome to ParkShare!",
+    "subtitle": "Tell us a bit about yourself so we can personalise your experience.",
+    "steps": {
+      "role": "Your role",
+      "profile": "Your profile",
+      "done": "All set!"
+    },
+    "roleStep": {
+      "heading": "How will you use ParkShare?",
+      "driver": "I need parking",
+      "driverDesc": "Find and book parking spots near your destination.",
+      "host": "I have a spot to share",
+      "hostDesc": "List your driveway or garage and earn money.",
+      "both": "Both"
+    },
+    "profileStep": {
+      "displayName": "Full name",
+      "displayNamePlaceholder": "Jane Doe",
+      "phone": "Phone number",
+      "phonePlaceholder": "+1 (416) 000-0000",
+      "avatar": "Profile photo",
+      "uploadPhoto": "Upload photo"
+    },
+    "doneStep": {
+      "heading": "You're all set!",
+      "ctaDriver": "Find Parking",
+      "ctaHost": "Add Your First Listing"
+    }
+  },
+
+  "host": {
+    "dashboard": {
+      "title": "Host Dashboard",
+      "subtitle": "Manage your listings and track earnings.",
+      "noListings": "You haven't added any listings yet.",
+      "addFirst": "Add your first listing",
+      "stats": {
+        "activeListings": "Active Listings",
+        "totalBookings": "Total Bookings",
+        "pendingBookings": "Pending",
+        "monthlyRevenue": "Revenue (this month)"
+      }
+    },
+    "listings": {
+      "title": "My Listings",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "pending": "Pending Review",
+        "suspended": "Suspended"
+      },
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "edit": "Edit listing",
+        "delete": "Delete listing",
+        "viewBookings": "View bookings"
+      },
+      "confirmDelete": "Delete this listing? This cannot be undone.",
+      "deleteSuccess": "Listing deleted.",
+      "deleteError": "Failed to delete listing."
+    },
+    "create": {
+      "title": "Add New Listing",
+      "subtitle": "List your parking spot and start earning.",
+      "steps": {
+        "location": "Location",
+        "details": "Details",
+        "pricing": "Pricing",
+        "photos": "Photos",
+        "review": "Review"
+      },
+      "location": {
+        "heading": "Where is your parking spot?",
+        "address": "Street address",
+        "addressPlaceholder": "123 Main St, Toronto, ON",
+        "unit": "Unit / apt (optional)",
+        "city": "City",
+        "province": "Province",
+        "postalCode": "Postal code",
+        "useCurrentLocation": "Use my current location",
+        "mapInstructions": "Drag the pin to fine-tune the location."
+      },
+      "details": {
+        "heading": "Tell drivers about your spot",
+        "spotType": "Spot type",
+        "spotTypes": {
+          "driveway": "Driveway",
+          "garage": "Garage",
+          "surface_lot": "Surface lot",
+          "underground": "Underground",
+          "street": "Street"
+        },
+        "accessType": "Access type",
+        "accessTypes": {
+          "key": "Key",
+          "code": "Gate code",
+          "open": "Open access",
+          "app": "App-controlled"
+        },
+        "vehicleSizes": "Accepted vehicle sizes",
+        "vehicleSizeOptions": {
+          "compact": "Compact",
+          "standard": "Standard",
+          "suv": "SUV / Truck",
+          "oversized": "Oversized"
+        },
+        "amenities": "Amenities",
+        "amenityOptions": {
+          "covered": "Covered",
+          "ev_charging": "EV charging",
+          "security_camera": "Security camera",
+          "lighting": "Well lit",
+          "wheelchair": "Wheelchair accessible",
+          "heated": "Heated"
+        },
+        "description": "Description",
+        "descriptionPlaceholder": "Describe your spot — access instructions, nearby landmarks, etc.",
+        "descriptionHint": "Min. 20 characters. Be specific to help drivers find you."
+      },
+      "pricing": {
+        "heading": "Set your price",
+        "pricingModel": "Pricing model",
+        "models": {
+          "hourly": "Hourly",
+          "daily": "Daily",
+          "monthly": "Monthly subscription"
+        },
+        "hourlyRate": "Hourly rate (CAD)",
+        "dailyRate": "Daily rate (CAD)",
+        "monthlyRate": "Monthly rate (CAD)",
+        "currency": "Currency",
+        "minBookingHours": "Minimum booking (hours)",
+        "maxBookingDays": "Maximum booking (days)",
+        "availability": "Availability",
+        "availabilityHint": "Set the hours your spot is available each day.",
+        "instantBook": "Enable instant booking",
+        "instantBookDesc": "Drivers can book without waiting for your approval."
+      },
+      "photos": {
+        "heading": "Add photos of your spot",
+        "hint": "Upload at least 1 photo. Clear photos help drivers recognize your spot.",
+        "upload": "Upload photos",
+        "dragDrop": "Drag & drop or click to upload",
+        "maxSize": "Max 5 MB per photo • JPG, PNG, WebP",
+        "uploadError": "Upload failed. Please try again.",
+        "removePhoto": "Remove photo"
+      },
+      "review": {
+        "heading": "Review your listing",
+        "submitListing": "Submit Listing",
+        "submitSuccess": "Your listing has been submitted for review.",
+        "submitError": "Submission failed. Please try again."
+      }
+    },
+    "edit": {
+      "title": "Edit Listing",
+      "saveChanges": "Save Changes",
+      "saveSuccess": "Listing updated.",
+      "saveError": "Update failed. Please try again."
+    },
+    "verify": {
+      "title": "Verify Parking Access",
+      "subtitle": "Scan a driver's QR code to confirm their booking.",
+      "scanQR": "Scan QR Code",
+      "orEnterCode": "Or enter booking code manually",
+      "codePlaceholder": "Enter 8-character code",
+      "verifyButton": "Verify",
+      "result": {
+        "valid": "✓ Valid booking",
+        "invalid": "✗ Invalid or expired",
+        "alreadyUsed": "Already checked in",
+        "details": "Booking details"
+      },
+      "bookingInfo": {
+        "driver": "Driver",
+        "spot": "Spot",
+        "duration": "Duration",
+        "checkedIn": "Checked in at"
+      }
+    }
+  },
+
+  "driver": {
+    "search": {
+      "title": "Find Parking",
+      "placeholder": "Search address, neighbourhood, or landmark…",
+      "filters": "Filters",
+      "sortBy": "Sort by",
+      "sortOptions": {
+        "distance": "Distance",
+        "price_asc": "Price: Low to High",
+        "price_desc": "Price: High to Low",
+        "rating": "Rating"
+      },
+      "filterPanel": {
+        "priceRange": "Price range",
+        "spotType": "Spot type",
+        "amenities": "Amenities",
+        "vehicleSize": "Vehicle size",
+        "availability": "Available now",
+        "instantBook": "Instant book only",
+        "apply": "Apply Filters",
+        "reset": "Reset"
+      },
+      "resultsCount": "{count, plural, one {# spot found} other {# spots found}}",
+      "map": "Map",
+      "list": "List",
+      "noResults": "No spots found in this area. Try expanding your search."
+    },
+    "listingDetail": {
+      "bookNow": "Book Now",
+      "selectPlan": "Select Plan",
+      "monthly": "Monthly Pass",
+      "daily": "Daily",
+      "hourly": "Hourly",
+      "hostedBy": "Hosted by",
+      "memberSince": "Member since {date}",
+      "ratings": "{count} ratings",
+      "amenities": "Amenities",
+      "spotDetails": "Spot Details",
+      "location": "Location",
+      "locationNote": "Exact address shown after booking.",
+      "description": "Description",
+      "reviews": "Reviews",
+      "noReviews": "No reviews yet.",
+      "reportListing": "Report this listing",
+      "shareButton": "Share"
+    }
+  },
+
+  "checkout": {
+    "title": "Complete Booking",
+    "summary": "Booking Summary",
+    "spot": "Spot",
+    "plan": "Plan",
+    "duration": "Duration",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "startTime": "Start time",
+    "vehiclePlate": "Licence plate",
+    "vehiclePlatePlaceholder": "ABC 1234",
+    "vehicleMake": "Vehicle make / model",
+    "vehicleMakePlaceholder": "Toyota Corolla",
+    "priceBreakdown": {
+      "subtotal": "Subtotal",
+      "serviceFee": "Service fee",
+      "taxes": "Taxes (HST)",
+      "total": "Total"
+    },
+    "paymentMethod": "Payment Method",
+    "cardNumber": "Card number",
+    "expiry": "Expiry",
+    "cvv": "CVV",
+    "nameOnCard": "Name on card",
+    "payButton": "Pay {amount}",
+    "processing": "Processing…",
+    "terms": "By completing this booking, you agree to our {terms} and {privacy}.",
+    "termsLink": "Terms of Service",
+    "privacyLink": "Privacy Policy",
+    "success": {
+      "title": "Booking Confirmed! 🎉",
+      "subtitle": "Your parking pass is ready.",
+      "qrInstructions": "Show this QR code to the host to check in.",
+      "downloadPass": "Download Pass",
+      "viewPasses": "View My Passes",
+      "bookAnother": "Book Another Spot"
+    },
+    "errors": {
+      "paymentFailed": "Payment failed. Please check your details.",
+      "slotUnavailable": "This spot is no longer available for the selected time.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+
+  "passes": {
+    "title": "My Passes",
+    "subtitle": "Active and past parking passes.",
+    "tabs": {
+      "active": "Active",
+      "upcoming": "Upcoming",
+      "past": "Past"
+    },
+    "empty": {
+      "active": "No active passes.",
+      "upcoming": "No upcoming bookings.",
+      "past": "No past bookings."
+    },
+    "card": {
+      "spot": "Spot",
+      "address": "Address",
+      "validUntil": "Valid until",
+      "validFrom": "Valid from",
+      "status": {
+        "active": "Active",
+        "upcoming": "Upcoming",
+        "expired": "Expired",
+        "cancelled": "Cancelled"
+      },
+      "showQR": "Show QR Code",
+      "cancelPass": "Cancel Pass",
+      "renewPass": "Renew",
+      "viewDetails": "Details"
+    },
+    "detail": {
+      "title": "Pass Details",
+      "qrCode": "Entry QR Code",
+      "qrInstructions": "Show this at the parking spot to check in.",
+      "bookingId": "Booking ID",
+      "cancellationPolicy": "Cancellation Policy",
+      "cancelSuccess": "Pass cancelled. A refund will be processed within 5–7 business days.",
+      "cancelError": "Cancellation failed. Please contact support."
+    }
+  },
+
+  "ratings": {
+    "title": "Leave a Review",
+    "subtitle": "How was your experience at this spot?",
+    "overallRating": "Overall rating",
+    "categories": {
+      "accuracy": "Accuracy",
+      "cleanliness": "Cleanliness",
+      "access": "Access",
+      "communication": "Communication"
+    },
+    "writtenReview": "Written review (optional)",
+    "reviewPlaceholder": "Tell others about your experience…",
+    "submitReview": "Submit Review",
+    "reviewSuccess": "Thank you for your review!",
+    "reviewError": "Failed to submit review. Please try again.",
+    "stars": {
+      "1": "Poor",
+      "2": "Fair",
+      "3": "Good",
+      "4": "Very Good",
+      "5": "Excellent"
+    }
+  },
+
+  "errors": {
+    "notFound": {
+      "title": "Page Not Found",
+      "message": "The page you're looking for doesn't exist.",
+      "cta": "Go Home"
+    },
+    "serverError": {
+      "title": "Something Went Wrong",
+      "message": "An unexpected error occurred. Please try again.",
+      "cta": "Try Again"
+    },
+    "offline": {
+      "title": "You're Offline",
+      "message": "Check your internet connection and try again."
+    },
+    "forbidden": {
+      "title": "Access Denied",
+      "message": "You don't have permission to view this page."
+    },
+    "validation": {
+      "required": "This field is required.",
+      "email": "Enter a valid email address.",
+      "phone": "Enter a valid phone number.",
+      "minLength": "Must be at least {min} characters.",
+      "maxLength": "Must be no more than {max} characters.",
+      "min": "Must be at least {min}.",
+      "max": "Must be no more than {max}.",
+      "positiveNumber": "Must be a positive number.",
+      "invalidPostalCode": "Enter a valid Canadian postal code.",
+      "invalidPlate": "Enter a valid licence plate."
+    }
+  }
+}

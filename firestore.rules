@@ -1,0 +1,105 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -------------------------------------------------------------------------
+    // Helper functions
+    // -------------------------------------------------------------------------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isValidListing() {
+      let data = request.resource.data;
+      return data.hostId is string
+        && data.address is string
+        && data.city is string
+        && data.pricingModel in ['hourly', 'daily', 'monthly']
+        && data.status in ['active', 'inactive', 'pending', 'suspended'];
+    }
+
+    // -------------------------------------------------------------------------
+    // Users
+    // -------------------------------------------------------------------------
+    match /users/{uid} {
+      // Anyone authenticated can read their own profile; public fields only for others
+      allow read: if isSignedIn();
+      // Only the user can write their own profile
+      allow create, update: if isOwner(uid);
+      allow delete: if false; // soft-delete only
+    }
+
+    // -------------------------------------------------------------------------
+    // Listings
+    // -------------------------------------------------------------------------
+    match /listings/{listingId} {
+      // Active listings are publicly readable (for search)
+      allow read: if resource.data.status == 'active'
+                  || (isSignedIn() && resource.data.hostId == request.auth.uid);
+      // Only authenticated users can create; host must be themselves
+      allow create: if isSignedIn()
+                    && request.resource.data.hostId == request.auth.uid
+                    && isValidListing();
+      // Only the host can update/delete their listing
+      allow update: if isSignedIn()
+                    && resource.data.hostId == request.auth.uid
+                    && isValidListing();
+      allow delete: if isSignedIn()
+                    && resource.data.hostId == request.auth.uid;
+    }
+
+    // -------------------------------------------------------------------------
+    // Bookings
+    // -------------------------------------------------------------------------
+    match /bookings/{bookingId} {
+      // Both driver and host can read
+      allow read: if isSignedIn()
+                  && (request.auth.uid == resource.data.driverId
+                   || request.auth.uid == resource.data.hostId);
+      // Only server (Admin SDK) creates bookings; drivers cannot create directly
+      allow create: if false;
+      // Driver can cancel; host can update status
+      allow update: if isSignedIn()
+                    && (request.auth.uid == resource.data.driverId
+                     || request.auth.uid == resource.data.hostId);
+      allow delete: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // Reviews
+    // -------------------------------------------------------------------------
+    match /reviews/{reviewId} {
+      // Public read
+      allow read: if true;
+      // Only the author can create their own review
+      allow create: if isSignedIn()
+                    && request.resource.data.authorId == request.auth.uid;
+      // No updates or deletes
+      allow update, delete: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // Subscriptions (monthly passes)
+    // -------------------------------------------------------------------------
+    match /subscriptions/{subId} {
+      allow read: if isSignedIn()
+                  && (request.auth.uid == resource.data.driverId
+                   || request.auth.uid == resource.data.hostId);
+      allow create: if false; // Server-side only
+      allow update: if isSignedIn()
+                    && request.auth.uid == resource.data.driverId;
+      allow delete: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // Deny everything else
+    // -------------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
