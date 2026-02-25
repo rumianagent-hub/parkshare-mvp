@@ -103,7 +103,7 @@ export default async function HomePage({
             <p className="text-xs font-semibold uppercase tracking-widest text-green-600 mb-1">
               Available now
             </p>
-            <h2 className="text-2xl font-extrabold text-gray-900 sm:text-3xl">
+            <h2 className="text-xl md:text-2xl font-extrabold text-gray-900">
               Featured in Montréal
             </h2>
           </div>

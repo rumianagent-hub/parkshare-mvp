@@ -190,11 +190,11 @@ export default function ListingDetailView({ listing, hostName }: Props) {
   const reviewCount = reviews.length || listing.totalReviews || 0;
 
   return (
-    <div>
+    <div className="max-w-5xl mx-auto px-4 md:px-6 py-6">
       {/* ------------------------------------------------------------------ */}
-      {/* HERO IMAGE — full-width, h-80                                       */}
+      {/* HERO IMAGE                                                          */}
       {/* ------------------------------------------------------------------ */}
-      <div className="relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden mb-8">
+      <div className="relative w-full h-56 md:h-72 lg:h-80 rounded-2xl overflow-hidden mb-6">
         {listing.photoURLs && listing.photoURLs.length > 0 ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -215,13 +215,13 @@ export default function ListingDetailView({ listing, hostName }: Props) {
       </div>
 
       {/* ------------------------------------------------------------------ */}
-      {/* TWO-COLUMN GRID                                                     */}
+      {/* RESPONSIVE LAYOUT                                                   */}
       {/* ------------------------------------------------------------------ */}
-      <div className="lg:grid lg:grid-cols-3 lg:gap-10">
+      <div className="flex flex-col lg:grid lg:grid-cols-3 lg:gap-10">
         {/* ---------------------------------------------------------------- */}
         {/* LEFT / MAIN COLUMN                                               */}
         {/* ---------------------------------------------------------------- */}
-        <div className="lg:col-span-2 space-y-7">
+        <div className="lg:col-span-2 order-2 lg:order-1 space-y-7">
           {/* Title & location */}
           <div>
             <h1 className="text-3xl font-bold text-gray-900 leading-tight">
@@ -412,8 +412,8 @@ export default function ListingDetailView({ listing, hostName }: Props) {
         {/* ---------------------------------------------------------------- */}
         {/* RIGHT SIDEBAR — sticky booking card                              */}
         {/* ---------------------------------------------------------------- */}
-        <aside className="mt-8 lg:mt-0">
-          <div className="sticky top-24 bg-white rounded-2xl shadow-lg border border-gray-100 p-6 space-y-5">
+        <aside className="order-1 lg:order-2 mb-6 lg:mb-0">
+          <div className="lg:sticky lg:top-24 bg-white rounded-2xl shadow-lg border border-gray-100 p-6 space-y-5">
             {/* Price */}
             <div>
               <div className="flex items-end gap-2">
